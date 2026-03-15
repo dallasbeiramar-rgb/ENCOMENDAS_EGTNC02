@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EGITO NCRP - ENCOMENDAS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="overlay">
+        <section id="tela-login">
+            <div class="header-main">
+                <h1 class="glow-text">⚜️ EGITO NCRP ⚜️</h1>
+                <p class="subtitle">DEPARTAMENTO DE ARMAMENTO</p>
+            </div>
+            
+            <div class="login-container-horizontal reveal">
+                <div class="input-row">
+                    <input type="text" id="l-nick" placeholder="NICK NO NCRP" onblur="reconhecerUsuario()">
+                    <input type="number" id="l-pass" placeholder="PASSAPORTE">
+                    <input type="number" id="l-discord" placeholder="ID DO DISCORD (Ex: 128486...)">
+                    <input type="text" id="l-tel" placeholder="TELEFONE IN-GAME">
+                    <select id="l-tipo">
+                        <option value="cidadao">CIDADÃO NC</option>
+                        <option value="aliado">ALIADO COREIA</option>
+                        <option value="aliado">ALIADO CHINA</option>
+                        <option value="membro">MEMBRO EGITO</option>
+                    </select>
+                </div>
+                <div class="button-row">
+                    <button class="btn-action save" onclick="salvarConta()">💾 SALVAR CONTA</button>
+                    <button class="btn-action enter" onclick="entrarNoSite()">ENTRAR NO SITE</button>
+                    <button class="btn-action admin" onclick="acessoPainelAdm()">PAINEL ADMINISTRATIVO</button>
+                </div>
+            </div>
+
+            <div class="music-player">
+                <audio id="bg-music" loop>
+                    <source src="https://cdn.discordapp.com/attachments/1284882367156195389/1482640054135423196/0106_-_Dallas_Beirmar_RP_youtube.mp3?ex=69b7afa7&is=69b65e27&hm=4a527cb2f0e3f465d52aab69bd5ba0bb99fca44aaee343fca5db5878a112afc6&" type="audio/mpeg">
+                </audio>
+                <button id="btn-play-pause" onclick="toggleMusic()">▶️ PLAY</button>
+                <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5" oninput="ajustarVolume(this.value)">
+            </div>
+        </section>
+
+        <section id="tela-catalogo" class="hidden">
+            <div class="header-main">
+                <h1 class="glow-text">⚜️ EGITO NCRP ⚜️</h1>
+                <p class="subtitle">DEPARTAMENTO DE ARMAMENTO</p>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn-generic" onclick="abrirCarrinho()">🛒 CARRINHO (<span id="cart-qtd">0</span>)</button>
+                <button class="btn-generic" onclick="abrirMeusPedidos()">📑 MEUS PEDIDOS</button>
+                <button class="btn-generic exit" onclick="location.reload()">SAIR</button>
+            </div>
+            <input type="text" class="search-bar" placeholder="O QUE VOCÊ PROCURA?" onkeyup="filtrarItens(this.value)">
+            <div id="grid-produtos" class="grid-container"></div>
+        </section>
+
+        <section id="tela-carrinho" class="hidden">
+            <div class="login-box reveal" style="width: 500px; background: white; padding: 30px; border-radius: 15px;">
+                <h3 style="color:#111; font-weight:900; text-align: center;">SUA ENCOMENDA</h3>
+                <div id="lista-carrinho-check"></div>
+                <h2 id="total-carrinho" style="color: #ff0000; text-align: center;">TOTAL: R$ 0</h2>
+                <button class="btn-action enter" style="width: 100%; margin-bottom: 10px;" onclick="confirmarEncomenda()">ENVIAR PARA O DISCORD</button>
+                <button class="btn-action save" style="width: 100%;" onclick="voltarCatalogo()">ADICIONAR MAIS ITENS</button>
+            </div>
+        </section>
+
+        <section id="tela-meus-pedidos" class="hidden">
+            <div class="login-box reveal" style="width: 600px; background: white; padding: 30px; border-radius: 15px;">
+                <h3 style="color: #111; font-weight: 900; text-align: center;">HISTÓRICO</h3>
+                <div id="container-pedidos-cliente"></div>
+                <button class="btn-action save" onclick="voltarCatalogo()" style="margin-top:20px; width: 100%;">VOLTAR AO CATÁLOGO</button>
+            </div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
