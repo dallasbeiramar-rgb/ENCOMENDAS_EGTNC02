@@ -1,151 +1,275 @@
 /* FONTES E ANIMAÇÕES */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;700;900&display=swap');
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@keyframes glow { 0% { text-shadow: 0 0 5px #ff0000; } 50% { text-shadow: 0 0 20px #ff0000, 0 0 30px #000; } 100% { text-shadow: 0 0 5px #ff0000; } }
+@keyframes pulseRed { 0% { box-shadow: 0 0 5px #ff0000; } 50% { box-shadow: 0 0 20px #ff0000; } 100% { box-shadow: 0 0 5px #ff0000; } }
 
+/* ANIMAÇÃO RGB SINCRONIZADA */
+@keyframes rgbText {
+    0% { color: #ff0000; text-shadow: 0 0 15px rgba(255,0,0,0.6); }
+    33% { color: #00ff00; text-shadow: 0 0 15px rgba(0,255,0,0.6); }
+    66% { color: #0000ff; text-shadow: 0 0 15px rgba(0,0,255,0.6); }
+    100% { color: #ff0000; text-shadow: 0 0 15px rgba(255,0,0,0.6); }
+}
+
+.rgb-animate {
+    animation: rgbText 3s infinite linear !important;
+}
+
+/* BASE DO SITE */
 body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    background: url('https://cdn.discordapp.com/attachments/1284882367156195389/1482589013163376640/Egito3.png?ex=69b7801d&is=69b62e9d&hm=3377be2e8fd8d864901a255030c498ca18bee04fd9c9bc298699870b53ead263&') no-repeat center center fixed;
+    background: url('https://cdn.discordapp.com/attachments/1284882367156195389/1482589013163376640/Egito3.png') no-repeat center center fixed;
     background-size: cover;
-    color: #111;
+    color: #fff;
+    overflow-x: hidden;
 }
 
-.overlay { background: rgba(0, 0, 0, 0.5); min-height: 100vh; padding: 20px; backdrop-filter: blur(5px); }
+.overlay { 
+    background: radial-gradient(circle, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.95) 100%);
+    min-height: 100vh; 
+    padding: 20px; 
+    backdrop-filter: blur(8px); 
+}
+
 .hidden { display: none !important; }
 
-/* TÍTULOS */
-.glow-text {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 5rem;
-    color: #ffffff;
-    margin: 0;
-    letter-spacing: 10px;
-    animation: glow 3s infinite;
+/* CABEÇALHO */
+.header-main {
     text-align: center;
-}
-.subtitle {
-    color: #ff0000;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    text-align: center;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 5px 20px;
-    margin: 10px auto;
-    display: block;
-    width: fit-content;
+    padding: 40px 0;
+    animation: fadeIn 1.5s ease;
 }
 
-/* CONTAINER DE LOGIN */
+.glow-text {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(3rem, 10vw, 5.5rem);
+    margin: 0;
+    letter-spacing: 10px;
+    animation: rgbText 3s infinite linear;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    color: #fff;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 12px 30px;
+    margin: 15px auto;
+    display: block;
+    width: fit-content;
+    border: 2px solid #ff0000;
+    animation: pulseRed 2s infinite;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+/* LOGIN CONTAINER */
 .login-container-horizontal {
-    background: #ffffff;
-    max-width: 1100px;
-    margin: 50px auto;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-    animation: slideUp 0.8s ease;
+    background: rgba(11, 13, 15, 0.95);
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    animation: slideUp 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+    text-align: center;
 }
 
 .input-row {
     display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
+    gap: 15px;
     margin-bottom: 25px;
 }
 
 .input-row input, .input-row select {
-    flex: 1;
-    min-width: 180px;
+    width: 100%;
     padding: 15px;
-    border: 1px solid #ddd;
+    background: #14171a;
+    border: 1px solid #2d333b;
     border-radius: 8px;
-    font-family: 'Poppins';
-    font-size: 14px;
+    color: #fff;
+    font-size: 0.95rem;
+    outline: none;
     transition: 0.3s;
 }
 
-.input-row input:focus {
-    border-color: #ff0000;
-    outline: none;
-    box-shadow: 0 0 10px rgba(255,0,0,0.1);
+.input-row input:focus, .input-row select:focus { 
+    border-color: #ff0000; 
+    background: #000;
+    box-shadow: 0 0 10px rgba(255,0,0,0.2);
 }
 
+/* BOTÕES DE AÇÃO */
 .button-row {
     display: flex;
-    gap: 15px;
-    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
 }
 
-/* BOTÕES COM EFEITOS SOLICITADOS */
-.btn-action, .btn-generic, .btn-add {
+.btn-action {
+    width: 100%;
+    padding: 18px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.3s all ease;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+.btn-action.save { background: #333; color: white; }
+.btn-action.save:hover { background: #444; }
+
+.btn-action.enter { 
+    background: #ff0000; 
+    color: white; 
+    box-shadow: 0 5px 15px rgba(255,0,0,0.3);
+}
+.btn-action.enter:hover { 
+    background: #fff; 
+    color: #ff0000; 
+    transform: scale(1.02);
+}
+
+.btn-action.admin { 
+    background: transparent; 
+    color: #666; 
+    font-size: 0.8rem;
+    margin-top: 10px;
+}
+.btn-action.admin:hover { color: #ff0000; }
+
+/* GRID DE PRODUTOS */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 20px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.card-produto {
+    background: rgba(10, 12, 16, 0.9);
+    border-radius: 15px;
+    border: 1px solid #21262d;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
     position: relative;
     overflow: hidden;
-    transition: all 0.3s ease;
-    border: none;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.card-produto:hover {
+    transform: translateY(-10px);
+    border-color: #ff0000;
+    box-shadow: 0 10px 30px rgba(255,0,0,0.2);
+}
+
+.card-img-container {
+    height: 200px;
+    overflow: hidden;
+    background: #000;
+}
+
+.card-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: 0.5s;
+}
+
+.card-info { padding: 20px; text-align: center; }
+.card-info h3 { font-family: 'Bebas Neue'; font-size: 1.8rem; margin: 0; }
+
+.price-box { margin: 15px 0; }
+.main-price { font-size: 1.6rem; font-weight: 900; color: #00ff00; margin: 0; }
+.pix-tag { font-size: 10px; color: #888; text-transform: uppercase; }
+
+/* BARRA DE PESQUISA E NAV */
+.search-bar {
+    width: 100%;
+    padding: 15px 25px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid #333;
+    border-radius: 50px;
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+    margin-bottom: 30px;
+    transition: 0.3s;
+}
+.search-bar:focus { border-color: #ff0000; background: rgba(255,255,255,0.1); }
+
+.nav-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.btn-generic {
+    background: #1a1d21;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 1px solid #333;
     cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+    transition: 0.3s;
+}
+.btn-generic:hover { background: #ff0000; border-color: #ff0000; }
+.btn-generic.exit { background: #440000; }
+
+/* CARRINHO E PEDIDOS (MODAL STYLE) */
+.login-box {
+    margin: 20px auto;
+    animation: slideUp 0.5s ease;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
 }
 
-.btn-action:hover, .btn-generic:hover, .btn-add:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(255, 0, 0, 0.4);
-    filter: brightness(1.2);
+.cart-item-row {
+    color: #111;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
 }
 
-.btn-action::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -60%;
-    width: 20%;
-    height: 200%;
-    background: rgba(255,255,255,0.2);
-    transform: rotate(30deg);
-    transition: all 0.5s;
+.pedido-card {
+    background: #f8f9fa;
+    border-left: 5px solid #ff0000;
+    margin-bottom: 15px;
+    transition: 0.3s;
 }
 
-.btn-action:hover::after { left: 120%; }
+.pedido-card:hover { transform: scale(1.01); }
 
-.btn-action.save { background: #333; color: white; padding: 15px 30px; font-weight: 900; border-radius: 8px; }
-.btn-action.enter { background: #ff0000; color: white; padding: 15px 50px; font-size: 16px; font-weight: 900; border-radius: 8px; }
-.btn-action.admin { background: #eee; color: #333; padding: 15px 30px; font-weight: 900; border-radius: 8px; }
-
-.btn-add {
-    background: linear-gradient(45deg, #111, #333);
-    color: white; padding: 10px; width: 100%; font-weight: 900; border-radius: 5px;
+/* RESPONSIVIDADE */
+@media (max-width: 600px) {
+    .glow-text { font-size: 3rem; }
+    .login-container-horizontal { width: 90%; padding: 25px; }
+    .grid-container { grid-template-columns: 1fr; }
 }
 
-.btn-add:hover { background: linear-gradient(45deg, #ff0000, #990000); }
-
-/* SISTEMA DE CARDS PERSONALIZADOS */
-.card-produto {
-    background: white; border-radius: 10px; overflow: hidden;
-    transition: 0.3s; position: relative; display: flex; flex-direction: column;
+/* MUSIC PLAYER ESTILO */
+.music-player {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    animation: fadeIn 2s ease;
 }
 
-.card-img-container { width: 100%; height: 180px; display: flex; align-items: center; justify-content: center; background: #fdfdfd; }
-.card-img-container img { max-width: 90%; max-height: 90%; object-fit: contain; }
-
-.card-layout-padrao { border-top: 5px solid #ff0000; }
-
-.card-layout-dark-gold { background: linear-gradient(145deg, #1a1a1a, #000) !important; border: 2px solid #d4af37 !important; }
-.card-layout-dark-gold h3 { text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
-.card-layout-dark-gold .btn-add { background: #d4af37 !important; color: #000 !important; }
-
-.card-layout-modern-glass { background: rgba(255, 255, 255, 0.1) !important; backdrop-filter: blur(15px) !important; border: 1px solid rgba(255, 255, 255, 0.2) !important; }
-.card-layout-modern-glass h3, .card-layout-modern-glass p { color: white !important; }
-
-.card-layout-military { background: #2b2d2f !important; border-bottom: 5px solid #4b5320 !important; border-radius: 0px !important; }
-.card-layout-military h3 { font-family: 'Courier New', monospace; text-transform: uppercase; color: #fff !important; }
-.card-layout-military .btn-add { border-radius: 0px; background: #4b5320; }
-
-.card-info { padding: 15px; text-align: center; }
-
-/* OUTROS */
-.btn-generic { background: #000; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 900; }
-.btn-generic:hover { background: #ff0000; }
-
-.cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+#volume-slider {
+    accent-color: #ff0000;
+}

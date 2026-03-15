@@ -4,23 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EGITO NCRP - ENCOMENDAS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.discordapp.com/attachments/1284882367156195389/1482764542047031409/Gemini_Generated_Image_sfnyqasfnyqasfny.png" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Imagem de Fundo */
+        body {
+            background-image: url('https://cdn.discordapp.com/attachments/1284882367156195389/1482764542047031409/Gemini_Generated_Image_sfnyqasfnyqasfny.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        /* Ajustes finos para garantir a estética de elite */
+        .feedback-form {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 1px dashed #ff0000;
+        }
+        
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            font-size: 20px;
+            cursor: pointer;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .star { color: #ccc; transition: 0.3s; }
+        .star.active { color: #ff0000; }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .status-pendente { background: #ffcc00; color: #000; }
+        .status-aceito { background: #00ff00; color: #000; }
+        .status-pronta { background: #0000ff; color: #fff; }
+    </style>
 </head>
 <body>
     <div class="overlay">
         <section id="tela-login">
-            <div class="header-main">
+            <div class="header-main reveal">
                 <h1 class="glow-text">⚜️ EGITO NCRP ⚜️</h1>
-                <p class="subtitle">DEPARTAMENTO DE ARMAMENTO</p>
+                <p class="subtitle">DEPARTAMENTO DE LOGÍSTICA & ARMAMENTO</p>
             </div>
             
             <div class="login-container-horizontal reveal">
                 <div class="input-row">
                     <input type="text" id="l-nick" placeholder="NICK NO NCRP" onblur="reconhecerUsuario()">
                     <input type="number" id="l-pass" placeholder="PASSAPORTE">
-                    <input type="number" id="l-discord" placeholder="ID DO DISCORD (Ex: 128486...)">
-                    <input type="text" id="l-tel" placeholder="TELEFONE IN-GAME">
+                    <input type="number" id="l-discord" placeholder="ID DO DISCORD">
+                    <input type="text" id="l-tel" placeholder="TELEFONE (EX: 999-999)">
                     <select id="l-tipo">
                         <option value="cidadao">CIDADÃO NC</option>
                         <option value="aliado">ALIADO COREIA</option>
@@ -35,47 +78,117 @@
                 </div>
             </div>
 
-            <div class="music-player">
+            <div class="music-player reveal" style="margin-top: 20px;">
                 <audio id="bg-music" loop>
                     <source src="https://cdn.discordapp.com/attachments/1284882367156195389/1482640054135423196/0106_-_Dallas_Beirmar_RP_youtube.mp3?ex=69b7afa7&is=69b65e27&hm=4a527cb2f0e3f465d52aab69bd5ba0bb99fca44aaee343fca5db5878a112afc6&" type="audio/mpeg">
                 </audio>
-                <button id="btn-play-pause" onclick="toggleMusic()">▶️ PLAY</button>
-                <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5" oninput="ajustarVolume(this.value)">
+                <div style="display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.6); padding: 10px 20px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1);">
+                    <button id="btn-play-pause" onclick="toggleMusic()" style="background: none; border: none; color: white; cursor: pointer; font-weight: bold;">▶️ PLAY</button>
+                    <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5" oninput="ajustarVolume(this.value)" style="cursor: pointer;">
+                </div>
             </div>
         </section>
 
         <section id="tela-catalogo" class="hidden">
             <div class="header-main">
-                <h1 class="glow-text">⚜️ EGITO NCRP ⚜️</h1>
-                <p class="subtitle">DEPARTAMENTO DE ARMAMENTO</p>
+                <h1 class="glow-text">⚜️ ARSENAL EGITO ⚜️</h1>
+                <p class="subtitle">EQUIPAMENTOS DE ALTA PERFORMANCE</p>
             </div>
+            
             <div class="nav-buttons">
                 <button class="btn-generic" onclick="abrirCarrinho()">🛒 CARRINHO (<span id="cart-qtd">0</span>)</button>
                 <button class="btn-generic" onclick="abrirMeusPedidos()">📑 MEUS PEDIDOS</button>
-                <button class="btn-generic exit" onclick="location.reload()">SAIR</button>
+                <button class="btn-generic exit" onclick="location.reload()">SAIR DA CONTA</button>
             </div>
-            <input type="text" class="search-bar" placeholder="O QUE VOCÊ PROCURA?" onkeyup="filtrarItens(this.value)">
-            <div id="grid-produtos" class="grid-container"></div>
+
+            <div style="max-width: 800px; margin: 0 auto 30px;">
+                <input type="text" class="search-bar" placeholder="🔍 PESQUISAR POR ARMAMENTO OU CALIBRE..." onkeyup="filtrarItens(this.value)">
+            </div>
+
+            <div id="grid-produtos" class="grid-container">
+                </div>
         </section>
 
         <section id="tela-carrinho" class="hidden">
-            <div class="login-box reveal" style="width: 500px; background: white; padding: 30px; border-radius: 15px;">
-                <h3 style="color:#111; font-weight:900; text-align: center;">SUA ENCOMENDA</h3>
-                <div id="lista-carrinho-check"></div>
-                <h2 id="total-carrinho" style="color: #ff0000; text-align: center;">TOTAL: R$ 0</h2>
-                <button class="btn-action enter" style="width: 100%; margin-bottom: 10px;" onclick="confirmarEncomenda()">ENVIAR PARA O DISCORD</button>
-                <button class="btn-action save" style="width: 100%;" onclick="voltarCatalogo()">ADICIONAR MAIS ITENS</button>
+            <div class="login-box reveal" style="width: 90%; max-width: 500px; background: white; padding: 30px; border-radius: 15px; margin: 20px auto;">
+                <h3 style="color:#111; font-family: 'Bebas Neue'; font-size: 2rem; text-align: center; margin-bottom: 20px;">FECHAR ENCOMENDA</h3>
+                
+                <div id="lista-carrinho-check" style="margin-bottom: 20px;">
+                    </div>
+                
+                <div style="border-top: 2px solid #eee; padding-top: 15px; margin-bottom: 25px;">
+                    <h2 id="total-carrinho" style="color: #ff0000; text-align: center; font-family: 'Bebas Neue'; font-size: 2.5rem;">TOTAL: R$ 0</h2>
+                </div>
+
+                <button class="btn-action enter" style="width: 100%; margin-bottom: 12px; height: 60px; font-size: 1.2rem;" onclick="confirmarEncomenda()">🚀 ENVIAR PEDIDO AO DISCORD</button>
+                <button class="btn-action save" style="width: 100%; background: #333;" onclick="voltarCatalogo()">➕ ADICIONAR MAIS ITENS</button>
             </div>
         </section>
 
         <section id="tela-meus-pedidos" class="hidden">
-            <div class="login-box reveal" style="width: 600px; background: white; padding: 30px; border-radius: 15px;">
-                <h3 style="color: #111; font-weight: 900; text-align: center;">HISTÓRICO</h3>
-                <div id="container-pedidos-cliente"></div>
-                <button class="btn-action save" onclick="voltarCatalogo()" style="margin-top:20px; width: 100%;">VOLTAR AO CATÁLOGO</button>
+            <div class="login-box reveal" style="width: 90%; max-width: 600px; background: white; padding: 30px; border-radius: 15px; margin: 20px auto;">
+                <h3 style="color: #111; font-family: 'Bebas Neue'; font-size: 2rem; text-align: center;">MEU HISTÓRICO</h3>
+                
+                <div id="container-pedidos-cliente" style="margin-top: 20px;">
+                    </div>
+
+                <div id="feedback-section" class="feedback-form" style="display:none;">
+                    <h4 style="text-align: center; margin: 0; color: #111; font-size: 14px;">AVALIE NOSSO SERVIÇO</h4>
+                    <div class="star-rating">
+                        <span class="star" onclick="setStar(1)">★</span>
+                        <span class="star" onclick="setStar(2)">★</span>
+                        <span class="star" onclick="setStar(3)">★</span>
+                        <span class="star" onclick="setStar(4)">★</span>
+                        <span class="star" onclick="setStar(5)">★</span>
+                    </div>
+                    <textarea id="feedback-text" placeholder="Deixe um elogio ou sugestão..." style="width: 100%; border-radius: 5px; border: 1px solid #ddd; padding: 8px; font-family: 'Poppins'; font-size: 12px;"></textarea>
+                    <button onclick="enviarFeedback()" style="width: 100%; background: #ff0000; color: white; border: none; padding: 10px; margin-top: 10px; border-radius: 5px; font-weight: bold; cursor: pointer;">ENVIAR FEEDBACK</button>
+                </div>
+
+                <button class="btn-action save" onclick="voltarCatalogo()" style="margin-top:25px; width: 100%;">VOLTAR AO CATÁLOGO</button>
             </div>
         </section>
     </div>
+
+    <script>
+        let currentStars = 0;
+        
+        function setStar(n) {
+            currentStars = n;
+            const stars = document.querySelectorAll('.star');
+            stars.forEach((s, i) => {
+                s.classList.toggle('active', i < n);
+            });
+        }
+
+        function enviarFeedback() {
+            const texto = document.getElementById('feedback-text').value;
+            const nick = document.getElementById('l-nick').value || "Anônimo";
+            
+            if(currentStars === 0) return alert("Por favor, selecione as estrelas!");
+
+            const feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
+            feedbacks.push({
+                usuario: nick,
+                estrelas: currentStars,
+                texto: texto,
+                data: new Date().toLocaleDateString()
+            });
+
+            localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+            alert("⭐⭐⭐⭐⭐\nObrigado pelo seu feedback!");
+            document.getElementById('feedback-section').style.display = 'none';
+        }
+
+        // Mostrar a seção de feedback se houver pedidos
+        function checkFeedbackDisplay() {
+            const pedidos = JSON.parse(localStorage.getItem('encomendas')) || [];
+            if(pedidos.length > 0) {
+                document.getElementById('feedback-section').style.display = 'block';
+            }
+        }
+    </script>
+    
     <script src="script.js"></script>
 </body>
 </html>
