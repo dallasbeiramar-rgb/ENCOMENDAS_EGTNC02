@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EGITO_NCRP - Encomendas</title>
+    <title>EGITO NCRP - ENCOMENDAS</title>
+    <link url="https://cdn.discordapp.com/attachments/1284882367156195389/1482764542047031409/Gemini_Generated_Image_sfnyqasfnyqasfny.png" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* NOVA PALETA DE CORES: BRANCO E VERMELHO (ESTILO MODERNO) */
-        :root {
-            --primary: #ff0000; /* Vermelho Egito */
-            --primary-dark: #8b0000;
-            --bg-dark: #0a0a0a;
-            --card-bg: #121212;
-            --white: #ffffff;
-            --gray: #b3b3b3;
-            --green: #00ff88;
-            --blue: #00ccff;
-            --purple: #bf00ff;
-            --orange: #ff8800;
-            --neon-red: 0 0 15px rgba(255, 0, 0, 0.4);
+        /* Imagem de Fundo */
+        body {
+            background-image: radial-gradient(circle at top right, rgba(255, 0, 0, 0), transparent),
+                            url('https://cdn.discordapp.com/attachments/1284882367156195389/1482764542047031409/Gemini_Generated_Image_sfnyqasfnyqasfny.png?ex=69b82397&is=69b6d217&hm=03d77af7046362faa88257c73c7bac161a8d0bf7fe46f3fd429e98d900e9cef7&');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: var(--white);
+            margin: 0;
+            padding: 20px;
         }
 
         /* Ajustes finos para garantir a estética de elite */
@@ -122,6 +121,11 @@
                 
                 <div style="border-top: 2px solid #eee; padding-top: 15px; margin-bottom: 25px;">
                     <h2 id="total-carrinho" style="color: #ff0000; text-align: center; font-family: 'Bebas Neue'; font-size: 2.5rem;">TOTAL: R$ 0</h2>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" id="input-cupom" placeholder="Digite seu cupom de desconto" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                    <button id="btn-cupom" onclick="aplicarCupom()" style="padding: 0 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Aplicar</button>
                 </div>
 
                 <button class="btn-action enter" style="width: 100%; margin-bottom: 12px; height: 60px; font-size: 1.2rem;" onclick="confirmarEncomenda()">🚀 ENVIAR PEDIDO AO DISCORD</button>

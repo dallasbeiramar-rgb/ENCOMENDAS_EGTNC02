@@ -2,6 +2,7 @@ const WEBHOOK_URL = "https://discord.com/api/webhooks/1482626269534355547/iGrd_r
 let produtos = JSON.parse(localStorage.getItem('produtos')) || [];
 let carrinho = [];
 let usuarioAtivo = null;
+let cupomAplicado = 0; // 0 = sem desconto, 0.25 = 25% de desconto
 
 // --- SISTEMA DE USUÁRIO ---
 
@@ -54,6 +55,34 @@ function entrarNoSite() {
     renderizarProdutos(produtos);
 }
 
+// --- SISTEMA DE CUPONS ---
+
+function aplicarCupom() {
+    const input = document.getElementById('input-cupom');
+    const btn = document.getElementById('btn-cupom');
+    const codigo = input.value.toUpperCase();
+
+    if (cupomAplicado > 0) {
+        cupomAplicado = 0;
+        input.value = "";
+        input.disabled = false;
+        btn.innerText = "Aplicar";
+        alert("Cupom removido.");
+        renderizarCarrinhoCheckout();
+        return;
+    }
+
+    if (codigo === "COREIANC10" || codigo === "CHINANC20") {
+        cupomAplicado = 0.25;
+        input.disabled = true;
+        btn.innerText = "Remover";
+        alert("✅ Desconto de 25% aplicado!");
+        renderizarCarrinhoCheckout();
+    } else {
+        alert("❌ Cupom inválido!");
+    }
+}
+
 // --- SISTEMA DE PRODUTOS ---
 
 function renderizarProdutos(lista) {
@@ -66,7 +95,6 @@ function renderizarProdutos(lista) {
     }
 
     lista.forEach((p, idx) => {
-        // Cálculo de desconto para aliados (25% OFF)
         let temDesconto = usuarioAtivo.tipo === 'aliado';
         let precoReal = temDesconto ? p.preco * 0.75 : p.preco;
         let layoutClass = p.layout || 'padrao';
@@ -113,7 +141,6 @@ function addCarrinho(id) {
         carrinho.push({...p, qtd: 1}); 
     }
     
-    // Feedback visual rápido
     document.getElementById('cart-qtd').innerText = carrinho.reduce((acc, curr) => acc + curr.qtd, 0);
     alert(`📦 ${p.nome} adicionado!`);
 }
@@ -128,12 +155,12 @@ function abrirCarrinho() {
 function renderizarCarrinhoCheckout() {
     const container = document.getElementById('lista-carrinho-check');
     container.innerHTML = ""; 
-    let totalGeral = 0;
+    let totalBruto = 0;
 
     carrinho.forEach((item, index) => {
         let precoReal = usuarioAtivo.tipo === 'aliado' ? item.preco * 0.75 : item.preco;
         let subtotal = precoReal * item.qtd;
-        totalGeral += subtotal;
+        totalBruto += subtotal;
 
         container.innerHTML += `
         <div class="cart-item-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:10px; border-bottom:1px solid #eee;">
@@ -150,7 +177,9 @@ function renderizarCarrinhoCheckout() {
             </div>
         </div>`;
     });
-    document.getElementById('total-carrinho').innerText = `TOTAL: R$ ${totalGeral.toLocaleString()}`;
+
+    let totalComDesconto = totalBruto * (1 - cupomAplicado);
+    document.getElementById('total-carrinho').innerText = `TOTAL: R$ ${totalComDesconto.toLocaleString()}`;
 }
 
 function alterarQtd(index, valor) { 
@@ -186,12 +215,20 @@ function abrirMeusPedidos() {
         
         let infoEntrega = e.status === 'PRONTA' ? `<div style="background:#f0f7ff; padding:10px; border-radius:5px; margin-top:10px; font-size:12px; border-left:4px solid blue;">📍 <b>RETIRADA:</b> ${e.local || 'A combinar'} | ⏰ ${e.horario || 'Agora'}</div>` : '';
 
+        let infoResponsavel = "";
+        if (e.responsavel && e.responsavel.nick) {
+            infoResponsavel = `<div style="font-size:11px; color:#555; margin-top:5px; padding:5px; background:#f9f9f9; border-radius:4px;">
+                🛠️ <b>Responsável:</b> ${e.responsavel.nick} | <b>ID:</b> ${e.responsavel.passaporte || 'N/A'}
+            </div>`;
+        }
+
         container.innerHTML += `
         <div class="pedido-card" style="background:#fff; border:1px solid #ddd; padding:15px; border-radius:10px; margin-bottom:15px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <strong style="color:#111;">ORDEM #${e.id}</strong>
                 <span style="background:${statusColor}; color:${e.status === 'PRONTA' ? '#fff' : '#000'}; padding:3px 8px; border-radius:5px; font-size:10px; font-weight:bold;">${e.status}</span>
             </div>
+            ${infoResponsavel}
             <p style="font-size:13px; margin: 10px 0; color:#444;">${e.itens.map(i => i.qtd + 'x ' + i.nome).join(' | ')}</p>
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <span style="font-weight:bold; color:#ff0000;">${e.total}</span>
@@ -211,7 +248,7 @@ function abrirAvaliacao(pedidoId) {
     let comentario = prompt("Deixe um breve comentário:");
     if(comentario === null) comentario = "Sem comentários.";
 
-    let encomendas = JSON.parse(localStorage.getItem('encomendas'));
+    let encomendas = JSON.parse(localStorage.getItem('encomendas')) || [];
     let index = encomendas.findIndex(e => e.id === pedidoId);
     
     if(index !== -1) {
@@ -234,7 +271,8 @@ async function confirmarEncomenda() {
     if(carrinho.length === 0) return;
     
     const totalTxt = document.getElementById('total-carrinho').innerText;
-    const pedidoId = Math.floor(Math.random() * 8999) + 1000;
+    let encomendas = JSON.parse(localStorage.getItem('encomendas')) || [];
+    const pedidoId = encomendas.length + 1;
     
     const novaEnc = { 
         id: pedidoId, 
@@ -244,29 +282,21 @@ async function confirmarEncomenda() {
         total: totalTxt 
     };
     
-    let encomendas = JSON.parse(localStorage.getItem('encomendas')) || [];
     encomendas.push(novaEnc);
     localStorage.setItem('encomendas', JSON.stringify(encomendas));
 
-    // Verificação de responsável caso o pedido tenha sido aceito (ex: via admin)
-    const encomencaAtualizada = encomendas.find(e => e.id === pedidoId);
-    const temResponsavel = encomencaAtualizada.responsavel;
-
     const embed = {
         title: "⚜️ NOVO CARREGAMENTO SOLICITADO ⚜️",
-        description: `⚠️ **ALERTA DE PEDIDO** ⚠️\n<@&1284864780972326953> \n\n*Um novo cliente acaba de solicitar armamentos.*`,
+        description: `⚠️ **ALERTA DE PEDIDO** ⚠️\n<@&1447139269717262358> \n\n*Um novo cliente acaba de solicitar armamentos.*`,
         color: 16711680,
-        thumbnail: { url: "https://cdn.discordapp.com/attachments/1284882367156195389/1482589013163376640/Egito3.png" },
+        thumbnail: { url: "https://cdn.discordapp.com/attachments/1284882367156195389/1482764542047031409/Gemini_Generated_Image_sfnyqasfnyqasfny.png" },
         fields: [
-            temResponsavel ? { 
-                name: "🛠️ RESPONSÁVEL", 
-                value: `**ATENDIMENTO:** ${temResponsavel.nick}\n**ID DO DC:** <@${temResponsavel.idDc}>\n**ACESSO:** ${usuarioAtivo.tipo.toUpperCase()}`, 
-                inline: false 
-            } : { name: "⏳ STATUS", value: "AGUARDANDO ATENDIMENTO", inline: false },
+            { name: "⏳ STATUS", value: "AGUARDANDO ATENDIMENTO", inline: true },
             { name: "👤 CIDADÃO", value: `\`${usuarioAtivo.nick}\` | ID: \`${usuarioAtivo.passaporte}\``, inline: true },
+            { name: "🏷️ CLASSIFICAÇÃO", value: `\`${usuarioAtivo.tipo.toUpperCase()}\``, inline: true },
             { name: "📞 CONTATO", value: `TEL: ${usuarioAtivo.tel}\nDC: <@${usuarioAtivo.discord}>`, inline: true },
             { name: "📦 CARGA", value: "```" + carrinho.map(i => `➤ ${i.qtd}x ${i.nome}`).join('\n') + "```" },
-            { name: "💰 VALOR", value: `💵 **${totalTxt}**`, inline: false }
+            { name: "💰 VALOR", value: `💵 **${totalTxt}** ${cupomAplicado > 0 ? '*(CUPOM DE 25% APLICADO)*' : ''}`, inline: false }
         ],
         footer: { text: `EGITO NCRP | ID DO PEDIDO: #${pedidoId}` },
         timestamp: new Date()
@@ -283,12 +313,14 @@ async function confirmarEncomenda() {
         });
         alert("🚀 Sua encomenda foi enviada! Fique atento ao rádio/telefone.");
         carrinho = [];
+        cupomAplicado = 0;
         document.getElementById('cart-qtd').innerText = "0";
         voltarCatalogo(); 
     } catch (error) {
         console.error("Erro Webhook:", error);
         alert("⚠️ Ocorreu um erro ao enviar para o Discord, mas seu pedido foi salvo no histórico do site!");
         carrinho = [];
+        cupomAplicado = 0;
         voltarCatalogo();
     }
 }
@@ -307,6 +339,24 @@ function acessoPainelAdm() {
 function voltarCatalogo() { 
     document.querySelectorAll('section').forEach(s => s.classList.add('hidden')); 
     document.getElementById('tela-catalogo').classList.remove('hidden'); 
+}
+
+// --- FUNÇÕES DE ADMIN ---
+
+function limparFeedbacks() {
+    if(confirm("⚠️ Tem certeza que deseja apagar todos os feedbacks?")) {
+        localStorage.removeItem('feedbacks');
+        alert("✅ Feedbacks limpos!");
+        location.reload();
+    }
+}
+
+function resetarSistemaPedidos() {
+    if(confirm("🚨 ATENÇÃO: Isso apagará TODOS os pedidos e reiniciará o contador para #01. Deseja continuar?")) {
+        localStorage.removeItem('encomendas');
+        alert("✅ Sistema de pedidos reiniciado!");
+        location.reload();
+    }
 }
 
 // --- PLAYER DE MÚSICA ---

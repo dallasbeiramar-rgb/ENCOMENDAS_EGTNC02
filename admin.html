@@ -163,6 +163,8 @@
             display: flex;
             justify-content: space-between;
         }
+
+        .btn-mini { padding: 5px 10px; font-size: 10px; border: none; cursor: pointer; border-radius: 4px; margin-left: 5px; color: white; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -174,7 +176,13 @@
             </div>
 
             <div class="performance-box">
-                <h4>📊 FEEDBACKS RECEBIDOS</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h4>📊 FEEDBACKS RECEBIDOS</h4>
+                    <div>
+                        <button class="btn-mini" style="background:#ff0000;" onclick="limparFeedbacks()">LIMPAR FEEDBACKS</button>
+                        <button class="btn-mini" style="background:#000;" onclick="resetarSistemaPedidos()">RESETAR PEDIDOS</button>
+                    </div>
+                </div>
                 <div id="lista-avaliacoes" style="margin-top:10px; font-size: 12px; max-height: 150px; overflow-y: auto;"></div>
             </div>
 
@@ -250,6 +258,22 @@
     </div>
 
     <script>
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1482626269534355547/iGrd_rIIx3Q-UvgZprIr8HSA8fqN_SG4Qeag6aKAtV0eDBJ-bX2ZPh6i9z9zawCKDq5J";
+
+        // FUNÇÕES DE CONTROLE DE BANCO
+        function limparFeedbacks() {
+            if(confirm("Tem certeza que deseja apagar todos os feedbacks?")) {
+                localStorage.removeItem('feedbacks');
+                location.reload();
+            }
+        }
+        function resetarSistemaPedidos() {
+            if(confirm("ATENÇÃO: Isso apagará todos os pedidos. Deseja prosseguir?")) {
+                localStorage.removeItem('encomendas');
+                location.reload();
+            }
+        }
+
         // COMPRESSÃO DE IMAGEM
         function comprimirImagem(file, callback) {
             const reader = new FileReader();
@@ -384,8 +408,7 @@
             });
         }
 
-        // NOVO FLUXO DE ACEITE
-        function aceitarPedido(index) {
+        async function aceitarPedido(index) {
             const nick = prompt("Nick In-Game:");
             const idDc = prompt("ID do Discord (Numérico):");
             const pass = prompt("Passaporte:");
@@ -394,11 +417,19 @@
                 encs[index].status = "ACEITO";
                 encs[index].responsavel = { nick, idDc, pass };
                 localStorage.setItem('encomendas', JSON.stringify(encs));
+                
+                // NOTIFICAÇÃO DISCORD
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: `✅ **STATUS ATUALIZADO**\nO pedido **#${encs[index].id}** agora está como **ACEITO** pelo responsável **${nick}**.` })
+                });
+                
                 carregarEncomendasAdm();
             }
         }
 
-        function aceitarEncomendaCompleta(index) {
+        async function aceitarEncomendaCompleta(index) {
             const nick = prompt("Nick In-Game:");
             const idDc = prompt("ID do Discord (Numérico):");
             const pass = prompt("Passaporte:");
@@ -408,6 +439,14 @@
                 encs[index].status = "PRONTA";
                 encs[index].responsavel = { nick, idDc, pass, data };
                 localStorage.setItem('encomendas', JSON.stringify(encs));
+                
+                // NOTIFICAÇÃO DISCORD
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: `✅ **ENCOMENDA PRONTA**\nO pedido **#${encs[index].id}** foi concluído pelo responsável **${nick}** e está aguardando retirada!` })
+                });
+
                 carregarEncomendasAdm();
             }
         }
@@ -443,7 +482,6 @@
             }
         }
 
-        // INICIALIZAÇÃO
         window.onload = () => {
             carregarProdutosAdm(); 
             carregarEncomendasAdm();
